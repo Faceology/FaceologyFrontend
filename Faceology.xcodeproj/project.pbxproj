@@ -7,21 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C642B535206176940057A717 /* signin_with_linkedin-buttons in Resources */ = {isa = PBXBuildFile; fileRef = C642B534206176940057A717 /* signin_with_linkedin-buttons */; };
+		C642B5372061BA300057A717 /* DisclaimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B5362061BA300057A717 /* DisclaimerViewController.swift */; };
+		C642B5392061BA740057A717 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B5382061BA740057A717 /* QRCodeViewController.swift */; };
+		C642B53B2061BABE0057A717 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B53A2061BABE0057A717 /* EventViewController.swift */; };
 		C6B488BE205D7E270069892D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B488BD205D7E270069892D /* AppDelegate.swift */; };
-		C6B488C0205D7E270069892D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B488BF205D7E270069892D /* ViewController.swift */; };
+		C6B488C0205D7E270069892D /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B488BF205D7E270069892D /* LogInViewController.swift */; };
 		C6B488C3205D7E270069892D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6B488C1205D7E270069892D /* Main.storyboard */; };
 		C6B488C5205D7E270069892D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6B488C4205D7E270069892D /* Assets.xcassets */; };
 		C6B488C8205D7E270069892D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6B488C6205D7E270069892D /* LaunchScreen.storyboard */; };
+		C6B488D2205D81900069892D /* linkedin-sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B488D1205D81900069892D /* linkedin-sdk.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C642B534206176940057A717 /* signin_with_linkedin-buttons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "signin_with_linkedin-buttons"; sourceTree = "<group>"; };
+		C642B5362061BA300057A717 /* DisclaimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclaimerViewController.swift; sourceTree = "<group>"; };
+		C642B5382061BA740057A717 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
+		C642B53A2061BABE0057A717 /* EventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
 		C6B488BA205D7E270069892D /* Faceology.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Faceology.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6B488BD205D7E270069892D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C6B488BF205D7E270069892D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C6B488BF205D7E270069892D /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		C6B488C2205D7E270069892D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C6B488C4205D7E270069892D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C6B488C7205D7E270069892D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6B488C9205D7E280069892D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C6B488D1205D81900069892D /* linkedin-sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "linkedin-sdk.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6B488D2205D81900069892D /* linkedin-sdk.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,12 +65,17 @@
 		C6B488BC205D7E270069892D /* Faceology */ = {
 			isa = PBXGroup;
 			children = (
+				C6B488D1205D81900069892D /* linkedin-sdk.framework */,
 				C6B488BD205D7E270069892D /* AppDelegate.swift */,
-				C6B488BF205D7E270069892D /* ViewController.swift */,
+				C6B488BF205D7E270069892D /* LogInViewController.swift */,
+				C642B5382061BA740057A717 /* QRCodeViewController.swift */,
+				C642B5362061BA300057A717 /* DisclaimerViewController.swift */,
 				C6B488C1205D7E270069892D /* Main.storyboard */,
+				C642B53A2061BABE0057A717 /* EventViewController.swift */,
 				C6B488C4205D7E270069892D /* Assets.xcassets */,
 				C6B488C6205D7E270069892D /* LaunchScreen.storyboard */,
 				C6B488C9205D7E280069892D /* Info.plist */,
+				C642B534206176940057A717 /* signin_with_linkedin-buttons */,
 			);
 			path = Faceology;
 			sourceTree = "<group>";
@@ -123,6 +139,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C642B535206176940057A717 /* signin_with_linkedin-buttons in Resources */,
 				C6B488C8205D7E270069892D /* LaunchScreen.storyboard in Resources */,
 				C6B488C5205D7E270069892D /* Assets.xcassets in Resources */,
 				C6B488C3205D7E270069892D /* Main.storyboard in Resources */,
@@ -136,8 +153,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6B488C0205D7E270069892D /* ViewController.swift in Sources */,
+				C642B53B2061BABE0057A717 /* EventViewController.swift in Sources */,
+				C6B488C0205D7E270069892D /* LogInViewController.swift in Sources */,
 				C6B488BE205D7E270069892D /* AppDelegate.swift in Sources */,
+				C642B5392061BA740057A717 /* QRCodeViewController.swift in Sources */,
+				C642B5372061BA300057A717 /* DisclaimerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +295,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8555GLA3KQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Faceology",
+				);
 				INFOPLIST_FILE = Faceology/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = come.tianyizheng.Faceology;
@@ -289,6 +314,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8555GLA3KQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Faceology",
+				);
 				INFOPLIST_FILE = Faceology/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = come.tianyizheng.Faceology;
