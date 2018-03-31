@@ -11,6 +11,7 @@
 		C642B5372061BA300057A717 /* DisclaimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B5362061BA300057A717 /* DisclaimerViewController.swift */; };
 		C642B5392061BA740057A717 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B5382061BA740057A717 /* QRCodeViewController.swift */; };
 		C642B53B2061BABE0057A717 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B53A2061BABE0057A717 /* EventViewController.swift */; };
+		C649B49B206C0C0F00014D3A /* FaceDetectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C649B49A206C0C0F00014D3A /* FaceDetectionViewController.swift */; };
 		C6B488BE205D7E270069892D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B488BD205D7E270069892D /* AppDelegate.swift */; };
 		C6B488C0205D7E270069892D /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B488BF205D7E270069892D /* LogInViewController.swift */; };
 		C6B488C3205D7E270069892D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6B488C1205D7E270069892D /* Main.storyboard */; };
@@ -24,6 +25,7 @@
 		C642B5362061BA300057A717 /* DisclaimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclaimerViewController.swift; sourceTree = "<group>"; };
 		C642B5382061BA740057A717 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
 		C642B53A2061BABE0057A717 /* EventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
+		C649B49A206C0C0F00014D3A /* FaceDetectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewController.swift; sourceTree = "<group>"; };
 		C6B488BA205D7E270069892D /* Faceology.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Faceology.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6B488BD205D7E270069892D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C6B488BF205D7E270069892D /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
@@ -68,9 +70,10 @@
 				C6B488D1205D81900069892D /* linkedin-sdk.framework */,
 				C6B488BD205D7E270069892D /* AppDelegate.swift */,
 				C6B488BF205D7E270069892D /* LogInViewController.swift */,
-				C642B5382061BA740057A717 /* QRCodeViewController.swift */,
 				C642B5362061BA300057A717 /* DisclaimerViewController.swift */,
+				C642B5382061BA740057A717 /* QRCodeViewController.swift */,
 				C642B53A2061BABE0057A717 /* EventViewController.swift */,
+				C649B49A206C0C0F00014D3A /* FaceDetectionViewController.swift */,
 				C6B488C1205D7E270069892D /* Main.storyboard */,
 				C6B488C4205D7E270069892D /* Assets.xcassets */,
 				C6B488C6205D7E270069892D /* LaunchScreen.storyboard */,
@@ -158,6 +161,7 @@
 				C6B488BE205D7E270069892D /* AppDelegate.swift in Sources */,
 				C642B5392061BA740057A717 /* QRCodeViewController.swift in Sources */,
 				C642B5372061BA300057A717 /* DisclaimerViewController.swift in Sources */,
+				C649B49B206C0C0F00014D3A /* FaceDetectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +306,7 @@
 				);
 				INFOPLIST_FILE = Faceology/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = come.tianyizheng.Faceology;
+				PRODUCT_BUNDLE_IDENTIFIER = come.jatin.Faceology;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -321,7 +325,7 @@
 				);
 				INFOPLIST_FILE = Faceology/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = come.tianyizheng.Faceology;
+				PRODUCT_BUNDLE_IDENTIFIER = come.jatin.Faceology;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ded-CV-tSb">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -31,7 +31,7 @@
                                 </constraints>
                                 <state key="normal" title="Button" image="Sign-In-Small---Default"/>
                                 <connections>
-                                    <segue destination="e8j-ga-A0k" kind="show" id="YKF-2R-q2w"/>
+                                    <segue destination="e8j-ga-A0k" kind="show" id="YnV-Hc-msp"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T0V-oS-VMV" userLabel="PassWordlabel">
@@ -108,7 +108,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53.600000000000001" y="78.710644677661179"/>
+            <point key="canvasLocation" x="866" y="79"/>
         </scene>
         <!--Disclaimer View Controller-->
         <scene sceneID="fKw-bS-3Qt">
@@ -143,7 +143,7 @@
                                 </constraints>
                                 <state key="normal" title="I Agree"/>
                                 <connections>
-                                    <segue destination="Zp5-pY-rSe" kind="show" id="s1b-Yx-EgR"/>
+                                    <segue destination="Zp5-pY-rSe" kind="show" id="EGw-OW-E7l"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -156,15 +156,16 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="vXj-1B-5te"/>
                     </view>
+                    <navigationItem key="navigationItem" id="Y3u-ZU-4HE"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Er-0H-AfE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="871" y="79"/>
+            <point key="canvasLocation" x="1730" y="79"/>
         </scene>
-        <!--Code View Controller-->
+        <!--QRCodeViewController-->
         <scene sceneID="Ynr-aq-4um">
             <objects>
-                <viewController id="Zp5-pY-rSe" customClass="QRCodeViewController" customModule="Faceology" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="QRCodeViewController" id="Zp5-pY-rSe" customClass="QRCodeViewController" customModule="Faceology" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OWp-jl-DUc">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -172,17 +173,17 @@
                         <viewLayoutGuide key="safeArea" id="HbZ-wh-H4o"/>
                     </view>
                     <connections>
-                        <segue destination="650-4U-hC4" kind="show" identifier="finishScanning" id="ErV-H0-kQG"/>
+                        <segue destination="650-4U-hC4" kind="show" identifier="finishScanning" id="fii-GR-yhy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GLl-98-cOR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1669" y="85"/>
+            <point key="canvasLocation" x="2644" y="79"/>
         </scene>
-        <!--Event View Controller-->
+        <!--EventViewController-->
         <scene sceneID="kXk-z6-Kij">
             <objects>
-                <viewController id="650-4U-hC4" customClass="EventViewController" customModule="Faceology" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="650-4U-hC4" userLabel="EventViewController" customClass="EventViewController" customModule="Faceology" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="UDJ-CC-ik9">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -197,9 +198,22 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3aK-H8-f1x">
+                                <rect key="frame" x="151.5" y="493.5" width="71" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="46" id="b4U-YX-Tww"/>
+                                    <constraint firstAttribute="height" constant="30" id="ypJ-cW-vwd"/>
+                                </constraints>
+                                <state key="normal" title="Scan Face"/>
+                                <connections>
+                                    <segue destination="ded-CV-tSb" kind="show" id="fiT-ra-RVe"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="3aK-H8-f1x" firstAttribute="centerX" secondItem="mzO-Vl-yah" secondAttribute="centerX" id="DFy-e0-i8J"/>
+                            <constraint firstItem="3aK-H8-f1x" firstAttribute="top" secondItem="mzO-Vl-yah" secondAttribute="bottom" constant="135" id="ZKL-yo-mbk"/>
                             <constraint firstItem="mzO-Vl-yah" firstAttribute="centerY" secondItem="bAh-k5-dF6" secondAttribute="centerY" id="ad5-2i-Ooz"/>
                             <constraint firstItem="mzO-Vl-yah" firstAttribute="centerX" secondItem="bAh-k5-dF6" secondAttribute="centerX" id="vIf-sD-n50"/>
                         </constraints>
@@ -211,7 +225,71 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j3K-Ld-jcg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2553" y="84"/>
+            <point key="canvasLocation" x="3449" y="79"/>
+        </scene>
+        <!--FaceDetectionViewController-->
+        <scene sceneID="rfG-KL-kga">
+            <objects>
+                <viewController title="FaceDetectionViewController" id="ded-CV-tSb" userLabel="FaceDetectionViewController" customClass="FaceDetectionViewController" customModule="Faceology" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="2Hv-xJ-8sE">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fsk-z7-JvP">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view alpha="0.0" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="uiI-Hy-xMA">
+                                <rect key="frame" x="0.0" y="467" width="375" height="200"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="94c-uY-RQw"/>
+                                </constraints>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YOs-U3-fN1">
+                                <rect key="frame" x="62" y="417" width="250" height="250"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="dL2-pk-u4l"/>
+                                    <constraint firstAttribute="height" constant="250" id="uPb-YG-JYt"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Number of Faces" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fOb-yi-2Y0">
+                                <rect key="frame" x="121.5" y="537" width="131" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="4pb-Ml-IaT"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="zMr-O3-Uta"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="ag0-1Q-Vv1" firstAttribute="bottom" secondItem="uiI-Hy-xMA" secondAttribute="bottom" id="0h9-vR-XgT"/>
+                            <constraint firstItem="ag0-1Q-Vv1" firstAttribute="bottom" secondItem="fsk-z7-JvP" secondAttribute="bottom" id="C0Z-0R-vj3"/>
+                            <constraint firstItem="ag0-1Q-Vv1" firstAttribute="bottom" secondItem="YOs-U3-fN1" secondAttribute="bottom" id="D9d-I2-vx8"/>
+                            <constraint firstItem="uiI-Hy-xMA" firstAttribute="leading" secondItem="ag0-1Q-Vv1" secondAttribute="leading" id="F8t-uv-JAW"/>
+                            <constraint firstItem="YOs-U3-fN1" firstAttribute="centerX" secondItem="ag0-1Q-Vv1" secondAttribute="centerX" id="FIh-Gc-RAY"/>
+                            <constraint firstItem="ag0-1Q-Vv1" firstAttribute="trailing" secondItem="uiI-Hy-xMA" secondAttribute="trailing" id="HhT-Wd-tza"/>
+                            <constraint firstItem="ag0-1Q-Vv1" firstAttribute="bottom" secondItem="fOb-yi-2Y0" secondAttribute="bottom" constant="100" id="ffV-rS-Wrz"/>
+                            <constraint firstItem="fOb-yi-2Y0" firstAttribute="centerX" secondItem="ag0-1Q-Vv1" secondAttribute="centerX" id="koQ-0a-hqz"/>
+                            <constraint firstItem="fsk-z7-JvP" firstAttribute="height" secondItem="2Hv-xJ-8sE" secondAttribute="height" id="r3y-9c-A2k"/>
+                            <constraint firstItem="ag0-1Q-Vv1" firstAttribute="trailing" secondItem="fsk-z7-JvP" secondAttribute="trailing" id="tDA-P2-Itp"/>
+                            <constraint firstItem="fsk-z7-JvP" firstAttribute="leading" secondItem="ag0-1Q-Vv1" secondAttribute="leading" id="wX6-aF-LZQ"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="ag0-1Q-Vv1"/>
+                    </view>
+                    <connections>
+                        <outlet property="cameraView" destination="fsk-z7-JvP" id="fUG-cK-dKE"/>
+                        <outlet property="faceView" destination="uiI-Hy-xMA" id="oeL-iE-T0s"/>
+                        <outlet property="imageView" destination="YOs-U3-fN1" id="zBX-hD-p8i"/>
+                        <outlet property="numFaces" destination="fOb-yi-2Y0" id="5YL-B3-BXQ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PLW-CJ-r76" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4447" y="79"/>
         </scene>
     </scenes>
     <resources>

@@ -16,16 +16,15 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+//        self.navigationController?.navigationBar.isHidden = true;
         captureSession = AVCaptureSession()
         
-        guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else { return }
+        guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
         let videoInput: AVCaptureDeviceInput
 
         do {
-            // Get an instance of the AVCaptureDeviceInput class using the previous device object.
+            // Get an instance of the AVCaptureDeviceInput class using the device object.
             videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
-            
             
         } catch {
             // If any error occurs
@@ -80,7 +79,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             found(code: stringValue)
         }
         
-        dismiss(animated: true)
+//        dismiss(animated: true)
     }
     
     func found(code: String) {
@@ -109,6 +108,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         
         if (captureSession?.isRunning == true) {
             captureSession.stopRunning()
+            captureSession = nil
         }
     }
     
