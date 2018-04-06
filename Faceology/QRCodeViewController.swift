@@ -10,13 +10,17 @@ import UIKit
 import AVFoundation
 
 class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
-
+    
+    var profileInfo: LISDKAPIResponse!
+    var restClient: RestClient!
+    
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     
+    var defaultInfo : LISDKAPIResponse!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.navigationController?.navigationBar.isHidden = true;
         captureSession = AVCaptureSession()
         
         guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
@@ -62,12 +66,6 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         captureSession.startRunning()
     }
     
-    func failed() {
-        let ac = UIAlertController(title: "Scanning not supported", message: "We can't find the camera on your device.", preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "OK", style: .default))
-        present(ac, animated: true)
-        captureSession = nil
-    }
     
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         captureSession.stopRunning()
@@ -79,12 +77,20 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             found(code: stringValue)
         }
         
-//        dismiss(animated: true)
     }
     
     func found(code: String) {
         print(code)
-        performSegue(withIdentifier: "finishScanning", sender: code)
+        if profileInfo != nil {
+            performSegue(withIdentifier: "finishScanning", sender: profileInfo)
+        }
+        else {
+            let dataInfo = "{\n  \"formattedName\": \"Tianyi Zheng\",\n  \"headline\": \"Interested in Backend Development and Computer Vision.  \",\n  \"location\": {\"name\": \"Greater Atlanta Area\"},\n  \"pictureUrls\": {\n    \"_total\": 1,\n    \"values\": [\"https://media.licdn.com/dms/image/C4E04AQFRRmVw-PTV2g/profile-originalphoto-shrink_450_600/0?e=1528088400&v=alpha&t=fUm36z8IoXkeXWTBlzDebLLIA5jfUFiEL3rEXl5iOJw\"]\n  },\n  \"summary\": \"Proficient in Python, C/C++, Swift, Java and Matlab. Familiar with Django, Spring, J2EE, Flask, Postgres, MongoDb, React Native.\\n\\nhttps://tianyizheng.github.io\"\n}"
+            
+            let defaultInfo = LISDKAPIResponse.init(data: dataInfo, headers: [AnyHashable("Content-Type"): "application/json;charset=UTF-8"], statusCode: 200)
+
+            performSegue(withIdentifier: "finishScanning", sender: defaultInfo)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -118,6 +124,13 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
+    }
+    
+    func failed() {
+        let ac = UIAlertController(title: "Scanning not supported", message: "We can't find the camera on your device.", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+        captureSession = nil
     }
 
 }

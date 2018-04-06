@@ -1,0 +1,16 @@
+PODS:
+  - SwiftClient (3.0.4)
+
+DEPENDENCIES:
+  - SwiftClient (~> 3.0.4)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - SwiftClient
+
+SPEC CHECKSUMS:
+  SwiftClient: 53304f51c4082130ea35497ee4edb225fd51806b
+
+PODFILE CHECKSUM: 33f2b7c5b50c073701e01176405d4d3a024cde6b
+
+COCOAPODS: 1.5.0

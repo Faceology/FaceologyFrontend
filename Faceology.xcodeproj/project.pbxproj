@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C60E98032075DDAB00AC38D3 /* RestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C60E98022075DDAB00AC38D3 /* RestClient.swift */; };
 		C642B535206176940057A717 /* signin_with_linkedin-buttons in Resources */ = {isa = PBXBuildFile; fileRef = C642B534206176940057A717 /* signin_with_linkedin-buttons */; };
 		C642B5372061BA300057A717 /* DisclaimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B5362061BA300057A717 /* DisclaimerViewController.swift */; };
 		C642B5392061BA740057A717 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C642B5382061BA740057A717 /* QRCodeViewController.swift */; };
@@ -18,9 +19,14 @@
 		C6B488C5205D7E270069892D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6B488C4205D7E270069892D /* Assets.xcassets */; };
 		C6B488C8205D7E270069892D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6B488C6205D7E270069892D /* LaunchScreen.storyboard */; };
 		C6B488D2205D81900069892D /* linkedin-sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6B488D1205D81900069892D /* linkedin-sdk.framework */; };
+		DD5F03A80E97243FF8927DDC /* Pods_Faceology.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6D6621D198FA99FA3A6EE0E /* Pods_Faceology.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		563CE4C338C8FDB953D6F996 /* Pods-Faceology.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Faceology.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Faceology/Pods-Faceology.debug.xcconfig"; sourceTree = "<group>"; };
+		B27A809281D8208C1ACA7D6B /* Pods-Faceology.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Faceology.release.xcconfig"; path = "Pods/Target Support Files/Pods-Faceology/Pods-Faceology.release.xcconfig"; sourceTree = "<group>"; };
+		C60E98012075B31C00AC38D3 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
+		C60E98022075DDAB00AC38D3 /* RestClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClient.swift; sourceTree = "<group>"; };
 		C642B534206176940057A717 /* signin_with_linkedin-buttons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "signin_with_linkedin-buttons"; sourceTree = "<group>"; };
 		C642B5362061BA300057A717 /* DisclaimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclaimerViewController.swift; sourceTree = "<group>"; };
 		C642B5382061BA740057A717 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
@@ -34,6 +40,7 @@
 		C6B488C7205D7E270069892D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6B488C9205D7E280069892D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6B488D1205D81900069892D /* linkedin-sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "linkedin-sdk.framework"; sourceTree = "<group>"; };
+		C6D6621D198FA99FA3A6EE0E /* Pods_Faceology.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Faceology.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,17 +49,37 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6B488D2205D81900069892D /* linkedin-sdk.framework in Frameworks */,
+				DD5F03A80E97243FF8927DDC /* Pods_Faceology.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		63CED36F89726765E7BCDE3E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C6D6621D198FA99FA3A6EE0E /* Pods_Faceology.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B72CB45525DE9607B9CDB6B0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				563CE4C338C8FDB953D6F996 /* Pods-Faceology.debug.xcconfig */,
+				B27A809281D8208C1ACA7D6B /* Pods-Faceology.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		C6B488B1205D7E270069892D = {
 			isa = PBXGroup;
 			children = (
 				C6B488BC205D7E270069892D /* Faceology */,
 				C6B488BB205D7E270069892D /* Products */,
+				B72CB45525DE9607B9CDB6B0 /* Pods */,
+				63CED36F89726765E7BCDE3E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,6 +96,7 @@
 			children = (
 				C6B488D1205D81900069892D /* linkedin-sdk.framework */,
 				C6B488BD205D7E270069892D /* AppDelegate.swift */,
+				C60E98022075DDAB00AC38D3 /* RestClient.swift */,
 				C6B488BF205D7E270069892D /* LogInViewController.swift */,
 				C642B5362061BA300057A717 /* DisclaimerViewController.swift */,
 				C642B5382061BA740057A717 /* QRCodeViewController.swift */,
@@ -79,6 +107,7 @@
 				C6B488C6205D7E270069892D /* LaunchScreen.storyboard */,
 				C6B488C9205D7E280069892D /* Info.plist */,
 				C642B534206176940057A717 /* signin_with_linkedin-buttons */,
+				C60E98012075B31C00AC38D3 /* BridgingHeader.h */,
 			);
 			path = Faceology;
 			sourceTree = "<group>";
@@ -90,9 +119,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C6B488CC205D7E280069892D /* Build configuration list for PBXNativeTarget "Faceology" */;
 			buildPhases = (
+				48C81EBFB8B92D12BF2E19A9 /* [CP] Check Pods Manifest.lock */,
 				C6B488B6205D7E270069892D /* Sources */,
 				C6B488B7205D7E270069892D /* Frameworks */,
 				C6B488B8205D7E270069892D /* Resources */,
+				72E587593EF1ED5769ABD239 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -151,6 +182,45 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		48C81EBFB8B92D12BF2E19A9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Faceology-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		72E587593EF1ED5769ABD239 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Faceology/Pods-Faceology-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SwiftClient/SwiftClient.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftClient.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Faceology/Pods-Faceology-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		C6B488B6205D7E270069892D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -161,6 +231,7 @@
 				C6B488BE205D7E270069892D /* AppDelegate.swift in Sources */,
 				C642B5392061BA740057A717 /* QRCodeViewController.swift in Sources */,
 				C642B5372061BA300057A717 /* DisclaimerViewController.swift in Sources */,
+				C60E98032075DDAB00AC38D3 /* RestClient.swift in Sources */,
 				C649B49B206C0C0F00014D3A /* FaceDetectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,6 +367,7 @@
 		};
 		C6B488CD205D7E280069892D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 563CE4C338C8FDB953D6F996 /* Pods-Faceology.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -304,10 +376,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Faceology",
 				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/PODS/**";
 				INFOPLIST_FILE = Faceology/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = come.jatin.Faceology;
+				PRODUCT_BUNDLE_IDENTIFIER = come.tianyizheng.Faceology;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = Faceology/BridgingHeader.h;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -315,6 +389,7 @@
 		};
 		C6B488CE205D7E280069892D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B27A809281D8208C1ACA7D6B /* Pods-Faceology.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -323,10 +398,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Faceology",
 				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/PODS/**";
 				INFOPLIST_FILE = Faceology/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = come.jatin.Faceology;
+				PRODUCT_BUNDLE_IDENTIFIER = come.tianyizheng.Faceology;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = Faceology/BridgingHeader.h;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

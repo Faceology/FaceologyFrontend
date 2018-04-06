@@ -10,11 +10,10 @@ import UIKit
 import AVFoundation
 import Vision
 
-class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
+class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, UIGestureRecognizerDelegate {
     
-    @IBOutlet private var numFaces: UILabel!
-    @IBOutlet private var faceView: UIView!
-    @IBOutlet private var imageView: UIImageView!
+    private var imageView: UIImageView!
+    private var scrollView: UIScrollView!
     
     //add a custome view
     @IBOutlet private weak var cameraView: UIView!
@@ -38,21 +37,30 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     private var tempCIImage: CIImage!
     private var faceArray = [CIImage]()
     
+    private var context: CIContext!
+    
+    private var videoCaptureDevice: AVCaptureDevice?
+    
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         captureSession = AVCaptureSession()
         
+        //init a CI Context since it is expensive
+        context = CIContext(options: nil)
+
         faceDetectionRequest = VNDetectFaceRectanglesRequest(completionHandler: handleFaces)
         
         setupVision()
         
-        guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
+        videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
         let videoInput: AVCaptureDeviceInput
         
         do {
             // Get an instance of the AVCaptureDeviceInput class using the device object.
-            videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
+            videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice!)
             
         } catch {
             // If any error occurs
@@ -86,22 +94,135 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         self.previewLayer.videoGravity = .resizeAspectFill
         self.cameraView.layer.addSublayer(previewLayer)
         
+        //setting up pinching
+        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action:#selector(pinchToZoom))
+        
+        pinchRecognizer.delegate = self
+        self.cameraView.addGestureRecognizer(pinchRecognizer)
+        
+        
+        //setting up scroll view
+        let screensize: CGRect = UIScreen.main.bounds
+        let screenWidth = screensize.width
+        let screenHeight = screensize.height
+        
+        scrollView = UIScrollView(frame: CGRect(x: 0, y: screenHeight-130, width: screenWidth, height: 130))
+        
+        scrollView.contentSize = CGSize(width: screenWidth, height: 130)
+        view.addSubview(scrollView)
+        
         self.captureSession.startRunning()
 
     }
 
     @objc
-    private func showFaces() {
-        DispatchQueue.main.async {
-            if (self.faceArray.isEmpty == false) {
+    func pinchToZoom(sender:UIPinchGestureRecognizer) {
+        let vZoomFactor = ((sender ).scale)
+        setZoom(zoomFactor: vZoomFactor, sender: sender)
+    }
+    
+    func setZoom(zoomFactor:CGFloat, sender:UIPinchGestureRecognizer) {
+        var device: AVCaptureDevice = self.videoCaptureDevice!
+        var error:NSError!
+        do{
+            try device.lockForConfiguration()
+            defer {device.unlockForConfiguration()}
+            if (zoomFactor <= device.activeFormat.videoMaxZoomFactor) {
                 
-                let tempCIImage = self.faceArray.first!
-                
-                let transform = CGAffineTransform(translationX: -tempCIImage.extent.origin.x, y: -tempCIImage.extent.origin.y)
-                
-                self.imageView.image = UIImage(ciImage: tempCIImage.transformed(by: transform))
-                
+                let desiredZoomFactor:CGFloat = zoomFactor + atan2(sender.velocity, 5.0);
+                device.videoZoomFactor = max(1.0, min(desiredZoomFactor, device.activeFormat.videoMaxZoomFactor));
             }
+            else {
+                NSLog("Unable to set videoZoom: (max %f, asked %f)", device.activeFormat.videoMaxZoomFactor, zoomFactor);
+            }
+        }
+        catch error as NSError{
+            NSLog("Unable to set videoZoom: %@", error.localizedDescription);
+        }
+        catch _{
+        }
+    }
+    
+    @objc
+    private func showFaces() {
+        if (self.faceArray.isEmpty == false) {
+
+            var newImage : UIImage? = nil
+            var uiImage : UIImage? = nil
+            var tapGestureRecognizer : UITapGestureRecognizer!
+            var imageView: UIImageView!
+            var tempCIImage: CIImage!
+            var transform: CGAffineTransform!
+            
+            let group = DispatchGroup()
+            
+            //define transformation
+            
+            
+            scrollView.contentSize = CGSize(width: 130 * faceArray.count, height: 130)
+            
+            for i in 0 ..< faceArray.count {
+                
+                //get the cropped ci image from facearray
+                tempCIImage = self.faceArray[i]
+                
+                transform = CGAffineTransform(translationX: -tempCIImage.extent.origin.x, y: -tempCIImage.extent.origin.y)
+                
+                //init sync
+                group.enter()
+                
+                //create ui image from tempCIImage
+                uiImage = UIImage(ciImage: tempCIImage.transformed(by: transform))
+                
+                //create new bitmap based image
+                if uiImage?.ciImage != nil {
+                    
+                    newImage = self.convertCIImageToUIImage(inputImage: uiImage!.ciImage!)
+                    
+                    imageView = UIImageView.init(image: newImage)
+                    imageView.frame = CGRect.init(x: 130 * i, y: 10, width: 130, height: 130)
+                    
+                    imageView.layer.cornerRadius = imageView.frame.size.height/2
+                    imageView.layer.masksToBounds = true
+                    imageView.layer.borderColor = UIColor.white.cgColor
+                    imageView.layer.borderWidth = 5
+                    
+                    
+                    
+                    group.leave()
+                }
+                
+                group.notify(queue: .main) {
+                    
+                    tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped(sender:)))
+                    
+                    imageView.isUserInteractionEnabled = true
+                    
+                    imageView.addGestureRecognizer(tapGestureRecognizer)
+                    
+                    self.scrollView.addSubview(imageView)
+                    
+                }
+            }
+
+        }
+    }
+    
+    @objc
+    func imageTapped(sender: UITapGestureRecognizer)
+    {
+        let tappedImage = sender.view as! UIImageView
+        
+        let imageData = UIImagePNGRepresentation(tappedImage.image!)
+        
+        let strBase64 = imageData?.base64EncodedString(options: .lineLength64Characters)
+        
+        performSegue(withIdentifier: "showProfileInfo", sender: strBase64)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showProfileInfo" {
+            
         }
     }
     
@@ -158,6 +279,13 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         
     }
     
+    func convertCIImageToUIImage(inputImage: CIImage) -> UIImage? {
+        if let cgImage = self.context.createCGImage(inputImage, from: inputImage.extent) {
+            return UIImage(cgImage: cgImage)
+        }
+        return nil
+    }
+    
     func setupVision() {
         self.requests = [faceDetectionRequest]
     }
@@ -167,7 +295,6 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
             //perform all the UI updates on the main queue
             guard let results = request.results as? [VNFaceObservation] else { return }
             
-            self.numFaces.text = String(results.count)
             
             //get rid of last frame's boxes
             self.removeMask()
@@ -190,12 +317,11 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         let facebounds = face.boundingBox.applying(scale).applying(transform)
         
         //draw the box if within bounds
-        if (facebounds.maxY <= (previewLayer.bounds.height - faceView.bounds.height)){
+        if (facebounds.maxY <= (previewLayer.bounds.height - scrollView.bounds.height)){
             _ = createLayer(in: facebounds)
             
 //            let temp = CGRect(x: 0, y: 0, width: 100, height: 100)
             let tempImage = tempCIImage.oriented(forExifOrientation: 6)
-//
             
             let cropScale = CGAffineTransform.identity.scaledBy(x: tempImage.extent.width, y: tempImage.extent.height)
             
@@ -222,6 +348,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
 
         return mask
     }
+    
     
     func removeMask() {
         for mask in maskLayer {
