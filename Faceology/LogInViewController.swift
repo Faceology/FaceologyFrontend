@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class LogInViewController: UIViewController {
-    
+
     enum unkownError: Error {
         case unknown
     }
@@ -50,6 +51,12 @@ class LogInViewController: UIViewController {
     
     func goNext(profileInfo: LISDKAPIResponse!) {
         DispatchQueue.main.async {
+            let restClient : RestClient = RestClient()
+            let dataFromString = profileInfo.data!.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            let json = JSON(dataFromString as Any)
+            print(json)
+            restClient.postLinkedInInformation(dic: json)
+            
             self.performSegue(withIdentifier: "showDisclaimer", sender: profileInfo)
         }
     }

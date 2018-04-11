@@ -41,10 +41,11 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     
     private var videoCaptureDevice: AVCaptureDevice?
     
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationItem.title = "Camera"
         
         captureSession = AVCaptureSession()
         
@@ -106,9 +107,9 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         let screenWidth = screensize.width
         let screenHeight = screensize.height
         
-        scrollView = UIScrollView(frame: CGRect(x: 0, y: screenHeight-130, width: screenWidth, height: 130))
+        scrollView = UIScrollView(frame: CGRect(x: 0, y: screenHeight-110, width: screenWidth, height: 110))
         
-        scrollView.contentSize = CGSize(width: screenWidth, height: 130)
+        scrollView.contentSize = CGSize(width: screenWidth, height: 110)
         view.addSubview(scrollView)
         
         self.captureSession.startRunning()
@@ -146,11 +147,13 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     @objc
     private func showFaces() {
         if (self.faceArray.isEmpty == false) {
-
+            
+            clearSubviewsFromScrollView()
+            
             var newImage : UIImage? = nil
             var uiImage : UIImage? = nil
             var tapGestureRecognizer : UITapGestureRecognizer!
-            var imageView: UIImageView!
+            var imageView: UIImageView
             var tempCIImage: CIImage!
             var transform: CGAffineTransform!
             
@@ -159,7 +162,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
             //define transformation
             
             
-            scrollView.contentSize = CGSize(width: 130 * faceArray.count, height: 130)
+            scrollView.contentSize = CGSize(width: 110 * faceArray.count, height: 110)
             
             for i in 0 ..< faceArray.count {
                 
@@ -180,19 +183,12 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
                     newImage = self.convertCIImageToUIImage(inputImage: uiImage!.ciImage!)
                     
                     imageView = UIImageView.init(image: newImage)
-                    imageView.frame = CGRect.init(x: 130 * i, y: 10, width: 130, height: 130)
+                    imageView.frame = CGRect.init(x: 110 * i, y: 0, width: 100, height: 100)
                     
                     imageView.layer.cornerRadius = imageView.frame.size.height/2
                     imageView.layer.masksToBounds = true
                     imageView.layer.borderColor = UIColor.white.cgColor
                     imageView.layer.borderWidth = 5
-                    
-                    
-                    
-                    group.leave()
-                }
-                
-                group.notify(queue: .main) {
                     
                     tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped(sender:)))
                     
@@ -201,6 +197,13 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
                     imageView.addGestureRecognizer(tapGestureRecognizer)
                     
                     self.scrollView.addSubview(imageView)
+                    
+                    group.leave()
+                }
+                
+                group.notify(queue: .main) {
+                    
+                    
                     
                 }
             }
@@ -222,7 +225,22 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showProfileInfo" {
+            let profileVC = segue.destination as! ProfileViewController
+            let strBase64 = sender as! String
+            profileVC.strBase64 = strBase64
             
+            let backItem = UIBarButtonItem()
+            backItem.title = "Camera"
+            
+            navigationItem.backBarButtonItem = backItem
+        }
+    }
+    
+
+    func clearSubviewsFromScrollView()
+    {
+        for subview in scrollView.subviews {
+            subview.removeFromSuperview();
         }
     }
     
@@ -236,6 +254,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        
         if (captureSession?.isRunning == false) {
             captureSession.startRunning()
         }
@@ -247,9 +266,9 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+
         if (captureSession?.isRunning == true) {
             captureSession.stopRunning()
-            captureSession = nil
         }
     }
     

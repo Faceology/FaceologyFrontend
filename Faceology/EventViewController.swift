@@ -10,15 +10,13 @@ import UIKit
 
 class EventViewController: UIViewController {
 
-    var qrCode: String!
+    var profileInfo: LISDKAPIResponse!
+    
     @IBOutlet var messageLabel:UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        messageLabel.text = qrCode
-        
-        // Do any additional setup after loading the view.
     }
 
   

@@ -95,9 +95,10 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "finishScanning" {
-            let eventVC = segue.destination as! EventViewController
-            let qrCode = sender as! String
-            eventVC.qrCode = qrCode
+            let navController = segue.destination as! UINavigationController
+            let eventVC = navController.topViewController as! EventViewController
+            let profileInfo = sender as! LISDKAPIResponse
+            eventVC.profileInfo = profileInfo
         }
     }
 

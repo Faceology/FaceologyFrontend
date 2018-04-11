@@ -7,5 +7,5 @@ target 'Faceology' do
 
   # Pods for Faceology
   pod 'SwiftClient', '~> 3.0.4'
-
+  pod 'SwiftyJSON'
 end

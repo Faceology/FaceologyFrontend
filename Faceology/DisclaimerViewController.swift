@@ -10,12 +10,20 @@ import UIKit
 
 class DisclaimerViewController: UIViewController {
 
+    @IBOutlet var agreeButton : UIButton!
+    
     var restClient: RestClient!
     var profileInfo: LISDKAPIResponse!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+    }
+    
+    @IBAction func goNext(sender: Any?) {
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "showQRCode", sender: self.profileInfo)
+        }
     }
 
     

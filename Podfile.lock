@@ -1,16 +1,20 @@
 PODS:
   - SwiftClient (3.0.4)
+  - SwiftyJSON (4.0.0)
 
 DEPENDENCIES:
   - SwiftClient (~> 3.0.4)
+  - SwiftyJSON
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - SwiftClient
+    - SwiftyJSON
 
 SPEC CHECKSUMS:
   SwiftClient: 53304f51c4082130ea35497ee4edb225fd51806b
+  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: 33f2b7c5b50c073701e01176405d4d3a024cde6b
+PODFILE CHECKSUM: 94578251cf3201c8af1ec152951ab03e2c127456
 
 COCOAPODS: 1.5.0
