@@ -10,7 +10,7 @@ import UIKit
 
 class EventViewController: UIViewController {
 
-    var profileInfo: LISDKAPIResponse!
+    var qrCode: String!
     
     @IBOutlet var messageLabel:UILabel!
     
@@ -19,6 +19,19 @@ class EventViewController: UIViewController {
         
     }
 
-  
+    @IBAction func goNext(sender: Any?) {
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "showFaceDetection", sender: self.qrCode)
+        }
+    }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showFaceDetection" {
+            let showFaceDetectionVC = segue.destination as! FaceDetectionViewController
+            let qrCode = sender as! String
+            showFaceDetectionVC.qrCode = qrCode
+        }
+    }
 
 }

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftClient
 import SwiftyJSON
 
 class RestClient: NSObject {
@@ -25,6 +24,52 @@ class RestClient: NSObject {
         self.session = URLSession.shared
     }
     
+    func getObjects(previousIds: Any, eventKey: String, image: String, completion:@escaping (Any?)->()){
+        var returnData: Any? = nil
+        let addUrl: String = baseUrl + "/api/userInfo"
+        guard let guardAddURL = URL(string: addUrl) else {
+            print("Error: cannot create URL")
+            fatalError("Something went wrong!")
+        }
+        
+        var addUrlRequest = URLRequest(url: guardAddURL)
+        addUrlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addUrlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        addUrlRequest.httpMethod = "PUT"
+        
+        var dic: JSON = JSON()
+        dic["previousIds"] = JSON(previousIds)
+        
+        dic["eventKey"] = JSON(eventKey)
+        dic["image"] = JSON(image)
+
+        do {
+            try addUrlRequest.httpBody = dic.rawData() as Data
+        }
+        catch {
+            print("Error: could not add url request")
+        }
+        
+        let task = session.dataTask(with: addUrlRequest) {
+            (data, response, error) in
+            // check for any errors
+            guard error == nil else {
+                print("ERROR ERROR ERROR!!!!!!")
+                return
+            }
+            // make sure we got data
+            guard let responseData = data else {
+                print("Error: did not receive data")
+                return
+            }
+            print("data")
+//            print(data)
+            returnData = data
+            completion(JSON(returnData))
+        }
+        task.resume()
+    }
+    
     func postLinkedInInformation(dic: JSON){
         let addUrl: String = baseUrl + "/api/userInfo"
         guard let guardAddURL = URL(string: addUrl) else {
@@ -40,7 +85,7 @@ class RestClient: NSObject {
          try addUrlRequest.httpBody = dic.rawData() as Data
         }
         catch {
-            print("Error")
+            print("Error: could not add url request")
         }
         
         let task = session.dataTask(with: addUrlRequest) {

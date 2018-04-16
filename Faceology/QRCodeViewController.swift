@@ -8,6 +8,8 @@
 
 import UIKit
 import AVFoundation
+import SwiftyJSON
+
 
 class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
@@ -80,16 +82,35 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     }
     
     func found(code: String) {
-        print(code)
+        
         if profileInfo != nil {
-            performSegue(withIdentifier: "finishScanning", sender: profileInfo)
+            
+            let restClient : RestClient = RestClient()
+            let qrJson : JSON = ["eventKey": code]
+            let dataFromString = profileInfo.data!.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            let dataJson = JSON(dataFromString as Any)
+            
+            var mergedJson : JSON = JSON()
+            
+            mergedJson["linkedinInfo"] = dataJson
+            
+            mergedJson["eventKey"] = JSON(code)
+            
+            restClient.postLinkedInInformation(dic: mergedJson)
+//            do {
+//                try mergedJson = dataJson.merged(with: qrJson)
+//                print(mergedJson)
+////                restClient.postLinkedInInformation(dic: mergedJson)
+//            }
+
+//            catch {
+//                print("Error: cannot merge json")
+//            }
+//
+            performSegue(withIdentifier: "finishScanning", sender: code)
         }
         else {
-            let dataInfo = "{\n  \"formattedName\": \"Tianyi Zheng\",\n  \"headline\": \"Interested in Backend Development and Computer Vision.  \",\n  \"location\": {\"name\": \"Greater Atlanta Area\"},\n  \"pictureUrls\": {\n    \"_total\": 1,\n    \"values\": [\"https://media.licdn.com/dms/image/C4E04AQFRRmVw-PTV2g/profile-originalphoto-shrink_450_600/0?e=1528088400&v=alpha&t=fUm36z8IoXkeXWTBlzDebLLIA5jfUFiEL3rEXl5iOJw\"]\n  },\n  \"summary\": \"Proficient in Python, C/C++, Swift, Java and Matlab. Familiar with Django, Spring, J2EE, Flask, Postgres, MongoDb, React Native.\\n\\nhttps://tianyizheng.github.io\"\n}"
-            
-            let defaultInfo = LISDKAPIResponse.init(data: dataInfo, headers: [AnyHashable("Content-Type"): "application/json;charset=UTF-8"], statusCode: 200)
-
-            performSegue(withIdentifier: "finishScanning", sender: defaultInfo)
+            print("No profile found")
         }
     }
     
@@ -97,8 +118,8 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         if segue.identifier == "finishScanning" {
             let navController = segue.destination as! UINavigationController
             let eventVC = navController.topViewController as! EventViewController
-            let profileInfo = sender as! LISDKAPIResponse
-            eventVC.profileInfo = profileInfo
+            let qrCode = sender as! String
+            eventVC.qrCode = qrCode
         }
     }
 

@@ -16,13 +16,13 @@ class LogInViewController: UIViewController {
     }
     
     @IBAction func doLogin(sender: AnyObject) {
-        LISDKSessionManager.createSession(withAuth: [LISDK_BASIC_PROFILE_PERMISSION], state: nil, showGoToAppStoreDialog: true, successBlock: {
+        LISDKSessionManager.createSession(withAuth: [LISDK_BASIC_PROFILE_PERMISSION, LISDK_EMAILADDRESS_PERMISSION], state: nil, showGoToAppStoreDialog: true, successBlock: {
             
             (returnState) -> Void in
 //            print("success called!")
 //            print(LISDKSessionManager.sharedInstance().session)
             
-            let url = "https://api.linkedin.com/v1/people/~:(formattedName,emailAddress,headline,summary,specialties,pictureUrls::(original),location:(name))?format=json"
+            let url = "https://api.linkedin.com/v1/people/~:(formattedName,emailAddress,headline,summary,specialties,pictureUrls::(original),location:(name),publicProfileUrl,positions)?format=json"
             
             if LISDKSessionManager.hasValidSession() {
                 LISDKAPIHelper.sharedInstance().getRequest(url, success: { (response) -> Void in
@@ -51,11 +51,7 @@ class LogInViewController: UIViewController {
     
     func goNext(profileInfo: LISDKAPIResponse!) {
         DispatchQueue.main.async {
-            let restClient : RestClient = RestClient()
-            let dataFromString = profileInfo.data!.data(using: String.Encoding.utf8, allowLossyConversion: false)
-            let json = JSON(dataFromString as Any)
-            print(json)
-            restClient.postLinkedInInformation(dic: json)
+            
             
             self.performSegue(withIdentifier: "showDisclaimer", sender: profileInfo)
         }

@@ -9,9 +9,15 @@
 import UIKit
 import AVFoundation
 import Vision
+import SwiftyJSON
 
 class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, UIGestureRecognizerDelegate {
     
+    var restClient: RestClient!
+    var qrCode: String!
+    
+    private var getMatchingInfo: JSON? = nil
+
     private var imageView: UIImageView!
     private var scrollView: UIScrollView!
     
@@ -19,7 +25,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     @IBOutlet private weak var cameraView: UIView!
     //define layer for faces
     private var maskLayer = [CAShapeLayer]()
-    
+    private var matchingInfoDict: [Int:JSON] = [:]
     //define capture session
     private var captureSession: AVCaptureSession!
     //define a preview layer for displaying camera
@@ -37,14 +43,18 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     private var tempCIImage: CIImage!
     private var faceArray = [CIImage]()
     
+    private var previousIds : [String] = ["0"]
+    
     private var context: CIContext!
     
     private var videoCaptureDevice: AVCaptureDevice?
     
-    
+    private var isPending: Bool = false
+    private var foundFacematch: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         
+
         self.navigationItem.title = "Camera"
         
         captureSession = AVCaptureSession()
@@ -115,7 +125,250 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         self.captureSession.startRunning()
 
     }
+    
+//    @objc
+    private func showFaces() {
+        if (self.faceArray.isEmpty == false && !self.isPending) {
+            
+            self.isPending = true
+//            clearSubviewsFromScrollView()
+            
+            var newImage : UIImage? = nil
+            var uiImage : UIImage? = nil
+            var tapGestureRecognizer : UITapGestureRecognizer!
+            var tempCIImage: CIImage!
+            var transform: CGAffineTransform!
+            var usrId: String!
+            let group = DispatchGroup()
+            
+            //define transformation
+            
 
+            
+            //get the cropped ci image from facearray
+            tempCIImage = self.faceArray[0]
+            
+            transform = CGAffineTransform(translationX: -tempCIImage.extent.origin.x, y: -tempCIImage.extent.origin.y)
+            
+            //init sync
+            group.enter()
+            
+            //create ui image from tempCIImage
+            uiImage = UIImage(ciImage: tempCIImage.transformed(by: transform))
+            
+            
+            //create new bitmap based image
+            if uiImage?.ciImage != nil {
+                
+                newImage = self.convertCIImageToUIImage(inputImage: uiImage!.ciImage!)
+                
+                let restClient : RestClient = RestClient()
+                
+                let imageData = UIImagePNGRepresentation(newImage!)
+                
+                let strBase64 = imageData?.base64EncodedString(options: .lineLength64Characters)
+                
+                self.imageView = UIImageView.init(image: newImage)
+                
+//                print(previousIds)
+                restClient.getObjects(previousIds: previousIds, eventKey: qrCode, image: strBase64!){
+                    (responseData: Any?) in
+                        if (responseData != nil){
+                            self.getMatchingInfo = responseData as! JSON
+                            print("Request Finished")
+                            if (self.getMatchingInfo!["userInfo"] != nil){
+                                print("Found a Match")
+                                usrId = self.getMatchingInfo!["userInfo"]["userId"].stringValue
+                                self.previousIds.append(usrId)
+                                self.matchingInfoDict[Int(usrId)!] = self.getMatchingInfo
+                                self.foundFacematch = true
+                            }
+                            group.leave()
+                    }
+                        else {
+                            print("Error: Resposne Data is nil")
+                    }
+                }
+            }
+            
+            group.notify(queue: .main) {
+                if self.foundFacematch {
+                    print("Left")
+                    self.imageView.tag = Int(usrId)!
+                    self.imageView.frame = CGRect.init(x: 0, y: 0, width: 100, height: 100)
+                    
+                    self.imageView.layer.cornerRadius = self.imageView.frame.size.height/2
+                    self.imageView.layer.masksToBounds = true
+                    self.imageView.layer.borderColor = UIColor.white.cgColor
+                    self.imageView.layer.borderWidth = 5
+                    
+                    tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped(sender:)))
+                    
+                    self.imageView.isUserInteractionEnabled = true
+                    
+                    self.imageView.addGestureRecognizer(tapGestureRecognizer)
+                    
+                    self.changeSubView()
+                    
+                    self.isPending = false
+                    self.foundFacematch = false
+                }
+                else {
+                    self.isPending = false
+                }
+                
+            }
+
+
+        }
+    }
+
+    func changeSubView(){
+        let subViews:[UIView] = self.scrollView.subviews
+        let count = subViews.count
+        for i in 0..<count{
+            if let imageViewTypeCheck = subViews[i] as? UIImageView{
+                imageViewTypeCheck.frame = CGRect.init(x: 110*i-110, y: 0, width: 100, height: 100)
+                print(subViews[i].tag)
+            }
+            else{
+                print("Not a image view")
+            }
+            
+        }
+        self.scrollView.addSubview(self.imageView)
+        self.scrollView.contentSize = CGSize(width: 110 * (count-1), height: 110)
+    }
+
+    
+    //setup a request and perform request for each frame
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        
+        //make sure pixel buffer can be converted
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
+        var requestOptions: [VNImageOption : Any] = [:]
+        
+        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
+            requestOptions = [.cameraIntrinsics : cameraIntrinsicData]
+        }
+        
+        // perform image request for face recognition
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: requestOptions)
+        
+        do {
+            try imageRequestHandler.perform(self.requests)
+            tempCIImage = CIImage(cvImageBuffer: pixelBuffer)
+        }
+            
+        catch {
+            print(error)
+        }
+        
+    }
+ 
+    
+    private func handleFaces(request: VNRequest, error: Error?) {
+        DispatchQueue.main.async {
+            //perform all the UI updates on the main queue
+            guard let results = request.results as? [VNFaceObservation] else { return }
+            
+            //get rid of last frame's boxes
+            self.removeMask()
+            
+            for face in results {
+                self.drawFaceboundingBox(face: face)
+            }
+            
+            self.showFaces()
+        }
+    }
+
+    
+    func drawFaceboundingBox(face : VNFaceObservation) {
+        // The coordinates are normalized to the dimensions of the processed image, with the origin at the image's lower-left corner.
+        
+        let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -cameraView.bounds.height)
+        
+        let scale = CGAffineTransform.identity.scaledBy(x: cameraView.bounds.width, y: cameraView.bounds.height)
+
+        let facebounds = face.boundingBox.applying(scale).applying(transform)
+        
+        //draw the box if within bounds
+        if (facebounds.maxY <= (previewLayer.bounds.height - scrollView.bounds.height)){
+            _ = createLayer(in: facebounds)
+            
+//            let temp = CGRect(x: 0, y: 0, width: 100, height: 100)
+            let tempImage = tempCIImage.oriented(forExifOrientation: 6)
+            
+            let cropScale = CGAffineTransform.identity.scaledBy(x: tempImage.extent.width, y: tempImage.extent.height)
+            let cropFaceBounds = face.boundingBox.applying(cropScale)
+//            let cropFaceBounds = increaseRect(rect: face.boundingBox.applying(cropScale),byPercentage: 0.1)
+            
+            faceArray.append(tempImage.cropped(to: cropFaceBounds))
+        }
+    }
+    
+    
+    
+    
+    @objc
+    func imageTapped(sender: UITapGestureRecognizer)
+    {
+        let tappedImage = sender.view as! UIImageView
+        
+        let matchingInfo = self.matchingInfoDict[tappedImage.tag]
+        
+        if (matchingInfo != nil){
+            performSegue(withIdentifier: "showProfileInfo", sender: matchingInfo)
+        }
+        else {
+            print("Error: matchingInfo is nil")
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showProfileInfo" {
+            let profileVC = segue.destination as! ProfileViewController
+            let matchingInfo = sender as! JSON
+            profileVC.matchingInfo = matchingInfo
+            
+            let backItem = UIBarButtonItem()
+            backItem.title = "Camera"
+            
+            navigationItem.backBarButtonItem = backItem
+        }
+    }
+    
+    
+    func convertCIImageToUIImage(inputImage: CIImage) -> UIImage? {
+        if let cgImage = self.context.createCGImage(inputImage, from: inputImage.extent) {
+            return UIImage(cgImage: cgImage)
+        }
+        return nil
+    }
+    
+    func setupVision() {
+        self.requests = [faceDetectionRequest]
+    }
+    
+    // Create a new layer drawing the bounding box
+    private func createLayer(in rect: CGRect) -> CAShapeLayer {
+        
+        let mask = CAShapeLayer()
+        mask.frame = rect
+        mask.cornerRadius = 10
+        mask.opacity = 0.75
+        mask.borderColor = UIColor.yellow.cgColor
+        mask.borderWidth = 2.0
+        
+        //keeping track of faces so we can remove them in next frame
+        maskLayer.append(mask)
+        cameraView.layer.insertSublayer(mask, at: 1)
+
+        return mask
+    }
+    
     @objc
     func pinchToZoom(sender:UIPinchGestureRecognizer) {
         let vZoomFactor = ((sender ).scale)
@@ -144,99 +397,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         }
     }
     
-    @objc
-    private func showFaces() {
-        if (self.faceArray.isEmpty == false) {
-            
-            clearSubviewsFromScrollView()
-            
-            var newImage : UIImage? = nil
-            var uiImage : UIImage? = nil
-            var tapGestureRecognizer : UITapGestureRecognizer!
-            var imageView: UIImageView
-            var tempCIImage: CIImage!
-            var transform: CGAffineTransform!
-            
-            let group = DispatchGroup()
-            
-            //define transformation
-            
-            
-            scrollView.contentSize = CGSize(width: 110 * faceArray.count, height: 110)
-            
-            for i in 0 ..< faceArray.count {
-                
-                //get the cropped ci image from facearray
-                tempCIImage = self.faceArray[i]
-                
-                transform = CGAffineTransform(translationX: -tempCIImage.extent.origin.x, y: -tempCIImage.extent.origin.y)
-                
-                //init sync
-                group.enter()
-                
-                //create ui image from tempCIImage
-                uiImage = UIImage(ciImage: tempCIImage.transformed(by: transform))
-                
-                //create new bitmap based image
-                if uiImage?.ciImage != nil {
-                    
-                    newImage = self.convertCIImageToUIImage(inputImage: uiImage!.ciImage!)
-                    
-                    imageView = UIImageView.init(image: newImage)
-                    imageView.frame = CGRect.init(x: 110 * i, y: 0, width: 100, height: 100)
-                    
-                    imageView.layer.cornerRadius = imageView.frame.size.height/2
-                    imageView.layer.masksToBounds = true
-                    imageView.layer.borderColor = UIColor.white.cgColor
-                    imageView.layer.borderWidth = 5
-                    
-                    tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped(sender:)))
-                    
-                    imageView.isUserInteractionEnabled = true
-                    
-                    imageView.addGestureRecognizer(tapGestureRecognizer)
-                    
-                    self.scrollView.addSubview(imageView)
-                    
-                    group.leave()
-                }
-                
-                group.notify(queue: .main) {
-                    
-                    
-                    
-                }
-            }
-
-        }
-    }
     
-    @objc
-    func imageTapped(sender: UITapGestureRecognizer)
-    {
-        let tappedImage = sender.view as! UIImageView
-        
-        let imageData = UIImagePNGRepresentation(tappedImage.image!)
-        
-        let strBase64 = imageData?.base64EncodedString(options: .lineLength64Characters)
-        
-        performSegue(withIdentifier: "showProfileInfo", sender: strBase64)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showProfileInfo" {
-            let profileVC = segue.destination as! ProfileViewController
-            let strBase64 = sender as! String
-            profileVC.strBase64 = strBase64
-            
-            let backItem = UIBarButtonItem()
-            backItem.title = "Camera"
-            
-            navigationItem.backBarButtonItem = backItem
-        }
-    }
-    
-
     func clearSubviewsFromScrollView()
     {
         for subview in scrollView.subviews {
@@ -259,115 +420,20 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
             captureSession.startRunning()
         }
         
-        scanTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(showFaces), userInfo: nil, repeats: true)
-
+        //        scanTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(showFaces), userInfo: nil, repeats: true)
+        
     }
+    
+
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-
+        
         if (captureSession?.isRunning == true) {
             captureSession.stopRunning()
         }
     }
-    
-    //setup a request and perform request for each frame
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
-        //make sure pixel buffer can be converted
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        
-        var requestOptions: [VNImageOption : Any] = [:]
-        
-        if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
-            requestOptions = [.cameraIntrinsics : cameraIntrinsicData]
-        }
-        
-        // perform image request for face recognition
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: requestOptions)
-        
-        do {
-            try imageRequestHandler.perform(self.requests)
-            tempCIImage = CIImage(cvImageBuffer: pixelBuffer)
-        }
-            
-        catch {
-            print(error)
-        }
-        
-    }
-    
-    func convertCIImageToUIImage(inputImage: CIImage) -> UIImage? {
-        if let cgImage = self.context.createCGImage(inputImage, from: inputImage.extent) {
-            return UIImage(cgImage: cgImage)
-        }
-        return nil
-    }
-    
-    func setupVision() {
-        self.requests = [faceDetectionRequest]
-    }
-    
-    private func handleFaces(request: VNRequest, error: Error?) {
-        DispatchQueue.main.async {
-            //perform all the UI updates on the main queue
-            guard let results = request.results as? [VNFaceObservation] else { return }
-            
-            
-            //get rid of last frame's boxes
-            self.removeMask()
-            
-            for face in results {
-                self.drawFaceboundingBox(face: face)
-                
-            }
-        }
-    }
-
-    
-    func drawFaceboundingBox(face : VNFaceObservation) {
-        // The coordinates are normalized to the dimensions of the processed image, with the origin at the image's lower-left corner.
-        
-        let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -cameraView.bounds.height)
-        
-        let scale = CGAffineTransform.identity.scaledBy(x: cameraView.bounds.width, y: cameraView.bounds.height)
-
-        let facebounds = face.boundingBox.applying(scale).applying(transform)
-        
-        //draw the box if within bounds
-        if (facebounds.maxY <= (previewLayer.bounds.height - scrollView.bounds.height)){
-            _ = createLayer(in: facebounds)
-            
-//            let temp = CGRect(x: 0, y: 0, width: 100, height: 100)
-            let tempImage = tempCIImage.oriented(forExifOrientation: 6)
-            
-            let cropScale = CGAffineTransform.identity.scaledBy(x: tempImage.extent.width, y: tempImage.extent.height)
-            
-            let cropFaceBounds = face.boundingBox.applying(cropScale)
-
-            
-            faceArray.append(tempImage.cropped(to: cropFaceBounds))
-        }
-    }
-    
-    // Create a new layer drawing the bounding box
-    private func createLayer(in rect: CGRect) -> CAShapeLayer {
-        
-        let mask = CAShapeLayer()
-        mask.frame = rect
-        mask.cornerRadius = 10
-        mask.opacity = 0.75
-        mask.borderColor = UIColor.yellow.cgColor
-        mask.borderWidth = 2.0
-        
-        //keeping track of faces so we can remove them in next frame
-        maskLayer.append(mask)
-        cameraView.layer.insertSublayer(mask, at: 1)
-
-        return mask
-    }
-    
     
     func removeMask() {
         for mask in maskLayer {
@@ -375,6 +441,15 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         }
         maskLayer.removeAll()
         faceArray.removeAll()
+
+    }
+    
+    func increaseRect(rect: CGRect, byPercentage percentage: CGFloat) -> CGRect {
+        let startWidth = rect.width
+        let startHeight = rect.height
+        let adjustmentWidth = (startWidth * percentage) / 2.0
+        let adjustmentHeight = (startHeight * percentage) / 2.0
+        return rect.insetBy(dx: -adjustmentWidth, dy: -adjustmentHeight)
     }
     
     override var prefersStatusBarHidden: Bool {

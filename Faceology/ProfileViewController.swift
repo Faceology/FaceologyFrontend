@@ -7,31 +7,40 @@
 //
 
 import UIKit
+import SwiftyJSON
 
-class ProfileViewController: UIViewController {
 
-    var strBase64: String?
+class ProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    private var profileImage: UIImage!
+    // cell reuse id (cells that scroll out of view can be reused)
+    let cellReuseIdentifier = "PositionsCell"
+   
+    
+
+    var matchingInfo: JSON?
+    
     @IBOutlet var scrollView: UIScrollView!
     
     @IBOutlet var profileImageView: UIImageView!
-    
+
     @IBOutlet var coverView: UIView!
     
     @IBOutlet var mainInfoView: UIView!
-    @IBOutlet var locationLabel: UILabel!
+    @IBOutlet var positionsUiView: UIView!
+    @IBOutlet var positionsTableView: UITableView!
+ 
+    @IBOutlet weak var positionTableViewHeight: NSLayoutConstraint!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var headlineLabel: UILabel!
     @IBOutlet var summaryText: UITextView!
     @IBOutlet var companyLabel: UILabel!
     
-    @IBOutlet var profileLinkLabel: UILabel!
     @IBOutlet var emailLabel: UILabel!
     @IBOutlet var contactView: UIView!
     
     @IBOutlet var companyInfo: UIView!
     
+    private var profileUrl: String!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,12 +48,22 @@ class ProfileViewController: UIViewController {
         let screenWidth = screensize.width
 //        let screenHeight = screensize.height
         
-        let decodedImageData = Data.init(base64Encoded: strBase64!, options: Data.Base64DecodingOptions.ignoreUnknownCharacters)
+        let profileImageUrl: String! = matchingInfo!["userInfo"]["photo"].stringValue
+        profileUrl = matchingInfo!["profileLink"].stringValue
+
+        nameLabel.text = matchingInfo!["userInfo"]["name"].stringValue
+        headlineLabel.text = matchingInfo!["headline"].stringValue
+        summaryText.text = matchingInfo!["bio"].stringValue
+        emailLabel.text = matchingInfo!["email"].stringValue
+        companyLabel.text = matchingInfo![0]["companyName"].stringValue
+
         
-        profileImage = UIImage.init(data: decodedImageData!)
-        
-        
-        profileImageView.image = profileImage
+        if let url = URL(string: profileImageUrl) {
+            downloadImage(url: url)
+        }
+        else {
+            print("Error: cannot load url")
+        }
         
         profileImageView.layer.cornerRadius = profileImageView.frame.size.height/2
         profileImageView.layer.masksToBounds = true
@@ -54,16 +73,61 @@ class ProfileViewController: UIViewController {
 
         mainInfoView.layer.cornerRadius = 5
         contactView.layer.cornerRadius = 5
-
-        scrollView.contentSize = CGSize(width: screenWidth, height: 1000)
         
-    }
+        scrollView.contentSize = CGSize(width: screenWidth, height: 500)
+        
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        // (optional) include this line if you want to remove the extra empty cell divider lines
+        // self.tableView.tableFooterView = UIView()
+        
+        // This view controller itself will provide the delegate methods and row data for the table view.
+        positionsTableView.delegate = self
+        positionsTableView.dataSource = self
+        
+        
+        positionsTableView.rowHeight = 106
+        positionTableViewHeight.constant =  CGFloat(self.matchingInfo!["userJobs"].count*106)
+        positionsTableView.estimatedRowHeight = 100
+    }
+    //MARK: Actions
+    
+    
+    @IBAction func openURL (sender: AnyObject){
+        if let url = NSURL(string: self.profileUrl){
+            UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+        }
+    
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.matchingInfo!["userJobs"].count
     }
     
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // create a new cell if needed or reuse an old one
+        let cell:CompanyInfoTableCell = self.positionsTableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier) as! CompanyInfoTableCell
+        
+        // set the text from the data model
+
+        cell.companyName.text = self.matchingInfo!["userJobs"][indexPath.row]["companyName"].stringValue
+        cell.position.text = self.matchingInfo!["userJobs"][indexPath.row]["title"].stringValue
+        let startDate = self.matchingInfo!["userJobs"][indexPath.row]["dateStart"].stringValue
+        let endDate : String
+        if (self.matchingInfo!["userJobs"][indexPath.row]["dateEnd"] != JSON.null){
+            endDate = self.matchingInfo!["userJobs"][indexPath.row]["dateEnd"].stringValue
+        }
+        else {
+            endDate = "Present"
+        }
+        cell.startDate.text = startDate + "-" + endDate
+        cell.location.text = self.matchingInfo!["userJobs"][indexPath.row]["location"].stringValue
+        
+        cell.preservesSuperviewLayoutMargins = false
+        cell.separatorInset = UIEdgeInsets.zero
+        cell.layoutMargins = UIEdgeInsets.zero
+        return cell
+    }
+
     func addShadow(outerView: UIView!){
         outerView.clipsToBounds = false
         outerView.layer.shadowColor = UIColor.black.cgColor
@@ -71,6 +135,27 @@ class ProfileViewController: UIViewController {
         outerView.layer.shadowOffset = CGSize.zero
         outerView.layer.shadowPath = UIBezierPath(rect: outerView.bounds).cgPath
     }
-
+    
+    func downloadImage(url: URL) {
+        print("Download Started")
+        getDataFromUrl(url: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            print(response?.suggestedFilename ?? url.lastPathComponent)
+            print("Download Finished")
+            DispatchQueue.main.async() {
+                self.profileImageView.contentMode = UIViewContentMode.scaleAspectFill
+                
+                self.profileImageView.image = UIImage(data: data)
+                
+            }
+        }
+    }
+    
+    func getDataFromUrl(url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            completion(data, response, error)
+            }.resume()
+    }
 
 }
+
