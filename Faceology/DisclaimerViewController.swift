@@ -29,9 +29,15 @@ class DisclaimerViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showQRCode" {
-            let qrCodeVC = segue.destination as! QRCodeViewController
+            let navController = segue.destination as! UINavigationController
+            let qrCodeVC = navController.topViewController as! QRCodeViewController
             let profileInfo = sender as! LISDKAPIResponse
             qrCodeVC.profileInfo = profileInfo
+            
+            let backItem = UIBarButtonItem()
+            backItem.title = "Back"
+            
+            navigationItem.backBarButtonItem = backItem
         }
     }
 

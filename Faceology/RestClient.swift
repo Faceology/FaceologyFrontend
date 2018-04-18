@@ -100,26 +100,38 @@ class RestClient: NSObject {
                 return
             }
             
-//            // parse the result as JSON, since that's what the API provides
-//            do {
-//                guard let receivedData = try JSONSerialization.jsonObject(with: responseData,
-//                                                                          options: []) as? [String: Any] else {
-//                                                                            print("Could not get JSON from responseData as dictionary")
-//                                                                            return
-//                }
-//                guard let dataID = receivedData["id"] as? String else {
-//                    print("Could not get ID as int from JSON")
-//                    return
-//                }
-//                print("The ID is: \(dataID)")
-//                returnData = dataID
-//                return
-//            } catch  {
-//                print("error parsing response from POST")
-//                return
-//            }
         }
         task.resume()
-        
     }
+    
+    func getEventName(eventKey: String, completion:@escaping (Any?)->()){
+        var returnData: Any? = nil
+        let getUrl: String = baseUrl + "/api/event" + "?eventKey=\(eventKey)"
+        guard let guardGetUrl = URL(string: getUrl) else {
+            print("Error: cannot create URL")
+            fatalError("Something went wrong!")
+        }
+        
+        var getUrlRequest = URLRequest(url: guardGetUrl)
+        getUrlRequest.httpMethod = "GET"
+        
+        let task = session.dataTask(with: getUrlRequest) {
+            (data, response, error) in
+            // check for any errors
+            guard error == nil else {
+                print("ERROR ERROR ERROR!!!!!!")
+                return
+            }
+            // make sure we got data
+            guard let responseData = data else {
+                print("Error: did not receive data")
+                return
+            }
+            
+            returnData = data
+            completion(JSON(returnData))
+        }
+        task.resume()
+    }
+    
 }

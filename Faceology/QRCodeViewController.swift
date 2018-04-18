@@ -16,6 +16,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     var profileInfo: LISDKAPIResponse!
     var restClient: RestClient!
     
+    @IBOutlet weak var instructionLabel: UILabel!
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     
@@ -24,7 +25,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     override func viewDidLoad() {
         super.viewDidLoad()
         captureSession = AVCaptureSession()
-        
+        self.navigationItem.title = "QR Code Scanner"
         guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
         let videoInput: AVCaptureDeviceInput
 
@@ -64,7 +65,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         previewLayer.frame = view.layer.bounds
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
-        
+        view.bringSubview(toFront: instructionLabel)
         captureSession.startRunning()
     }
     
@@ -86,7 +87,6 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         if profileInfo != nil {
             
             let restClient : RestClient = RestClient()
-            let qrJson : JSON = ["eventKey": code]
             let dataFromString = profileInfo.data!.data(using: String.Encoding.utf8, allowLossyConversion: false)
             let dataJson = JSON(dataFromString as Any)
             

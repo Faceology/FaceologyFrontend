@@ -1,0 +1,17 @@
+{
+    "profileLink" : "https:\/\/www.linkedin.com\/in\/tianyizheng",
+    "summary" : "Proficient in Python, C\/C++, Swift, Java and Matlab. Familiar with Django, Spring, J2EE, Flask, Postgres, MongoDb, React Native.\n\nhttps:\/\/tianyizheng.github.io",
+    "location" : {
+        "name" : "Greater Atlanta Area"
+    },
+    "headline" : "Interested in Backend Development and Computer Vision.  ",
+    "formattedName" : "Tianyi Zheng",
+    "email" : "tzheng32@gatech.edu",
+    "pictureUrls" : {
+        "values" : [
+                    "https:\/\/media.licdn.com\/dms\/image\/C4E04AQFRRmVw-PTV2g\/profile-originalphoto-shrink_450_600\/0?e=1528830000&v=beta&t=foanHgZh-f7ooJ8CXmbBSQKTMkqynFYN90nGCvytwhc"
+                    ]
+    },
+    "emailAddress" : "tzheng32@gatech.edu",
+    "userJobs" :[]
+}

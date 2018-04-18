@@ -16,7 +16,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     let cellReuseIdentifier = "PositionsCell"
    
     
-
     var matchingInfo: JSON?
     
     @IBOutlet var scrollView: UIScrollView!
@@ -33,17 +32,17 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var headlineLabel: UILabel!
     @IBOutlet var summaryText: UITextView!
-    @IBOutlet var companyLabel: UILabel!
     
     @IBOutlet var emailLabel: UILabel!
     @IBOutlet var contactView: UIView!
     
-    @IBOutlet var companyInfo: UIView!
+    @IBOutlet var summaryInfo: UIView!
     
     private var profileUrl: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let screensize: CGRect = UIScreen.main.bounds
         let screenWidth = screensize.width
 //        let screenHeight = screensize.height
@@ -55,7 +54,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         headlineLabel.text = matchingInfo!["headline"].stringValue
         summaryText.text = matchingInfo!["bio"].stringValue
         emailLabel.text = matchingInfo!["email"].stringValue
-        companyLabel.text = matchingInfo![0]["companyName"].stringValue
 
         
         if let url = URL(string: profileImageUrl) {
@@ -74,8 +72,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         mainInfoView.layer.cornerRadius = 5
         contactView.layer.cornerRadius = 5
         
-        scrollView.contentSize = CGSize(width: screenWidth, height: 500)
-        
 
         
         // (optional) include this line if you want to remove the extra empty cell divider lines
@@ -89,6 +85,16 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         positionsTableView.rowHeight = 106
         positionTableViewHeight.constant =  CGFloat(self.matchingInfo!["userJobs"].count*106)
         positionsTableView.estimatedRowHeight = 100
+        
+        let coverViewHeight = coverView.frame.size.height
+        let mainInfoViewHeight = mainInfoView.frame.size.height
+        let positionsUiViewHeight = positionsUiView.frame.size.height
+        let contactViewHeight = contactView.frame.size.height
+        let summaryInfoViewHeight = summaryInfo.frame.size.height
+        let contentHeight = coverViewHeight + mainInfoViewHeight + positionsUiViewHeight + contactViewHeight + summaryInfoViewHeight
+        
+        scrollView.contentSize = CGSize(width: screenWidth, height: contentHeight)
+
     }
     //MARK: Actions
     

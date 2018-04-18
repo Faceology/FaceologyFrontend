@@ -7,15 +7,42 @@
 //
 
 import UIKit
+import SwiftyJSON
+
 
 class EventViewController: UIViewController {
 
     var qrCode: String!
+    var eventName: String!
     
     @IBOutlet var messageLabel:UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let group = DispatchGroup()
+        group.enter()
+        let restClient : RestClient = RestClient()
+        
+        restClient.getEventName(eventKey: qrCode){
+            (responseData: Any?) in
+            if (responseData != nil){
+                let getMatchingInfo = responseData as! JSON
+                print(getMatchingInfo)
+                print("Request Finished")
+                if (getMatchingInfo["name"] != JSON.null){
+                    print("Found event")
+                    self.eventName = getMatchingInfo["name"].stringValue
+                }
+                group.leave()
+            }
+            else {
+                print("Error: Resposne Data is nil")
+            }
+        }
+         group.notify(queue: .main) {
+            self.messageLabel.text = "Welcome to " + self.eventName
+        }
         
     }
 

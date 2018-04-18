@@ -15,6 +15,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     
     var restClient: RestClient!
     var qrCode: String!
+    var isFirst = true
     
     private var getMatchingInfo: JSON? = nil
 
@@ -40,7 +41,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     private var faceDetectionRequest: VNRequest!
   
     //temporary buffer to hold sample image
-    private var tempCIImage: CIImage!
+//    private var tempCIImage: CIImage!
     private var faceArray = [CIImage]()
     
     private var previousIds : [String] = ["0"]
@@ -62,9 +63,11 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         //init a CI Context since it is expensive
         context = CIContext(options: nil)
 
-        faceDetectionRequest = VNDetectFaceRectanglesRequest(completionHandler: handleFaces)
-        
-        setupVision()
+//        faceDetectionRequest = VNDetectFaceRectanglesRequest{request, error in
+//            //### Capture `pixelBuffer` inside this closure.
+//            self.handleFaces(from: pixelBuffer, request: request, error: error)
+//        }
+//        setupVision()
         
         videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
         let videoInput: AVCaptureDeviceInput
@@ -183,6 +186,9 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
                                 self.matchingInfoDict[Int(usrId)!] = self.getMatchingInfo
                                 self.foundFacematch = true
                             }
+                            else {
+                                print("No Match")
+                            }
                             group.leave()
                     }
                         else {
@@ -193,7 +199,6 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
             
             group.notify(queue: .main) {
                 if self.foundFacematch {
-                    print("Left")
                     self.imageView.tag = Int(usrId)!
                     self.imageView.frame = CGRect.init(x: 0, y: 0, width: 100, height: 100)
                     
@@ -210,10 +215,14 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
                     
                     self.changeSubView()
                     
-                    self.isPending = false
+                    AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                    
                     self.foundFacematch = false
+
+                    self.isPending = false
                 }
                 else {
+             
                     self.isPending = false
                 }
                 
@@ -229,7 +238,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         for i in 0..<count{
             if let imageViewTypeCheck = subViews[i] as? UIImageView{
                 imageViewTypeCheck.frame = CGRect.init(x: 110*i-110, y: 0, width: 100, height: 100)
-                print(subViews[i].tag)
+//                print(subViews[i].tag)
             }
             else{
                 print("Not a image view")
@@ -249,6 +258,12 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         
         var requestOptions: [VNImageOption : Any] = [:]
         
+        faceDetectionRequest = VNDetectFaceRectanglesRequest{request, error in
+            //### Capture `pixelBuffer` inside this closure.
+            self.handleFaces(from: pixelBuffer, request: request, error: error)
+        }
+        setupVision()
+
         if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, nil) {
             requestOptions = [.cameraIntrinsics : cameraIntrinsicData]
         }
@@ -258,7 +273,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         
         do {
             try imageRequestHandler.perform(self.requests)
-            tempCIImage = CIImage(cvImageBuffer: pixelBuffer)
+//            tempCIImage = CIImage(cvImageBuffer: pixelBuffer)
         }
             
         catch {
@@ -268,16 +283,17 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     }
  
     
-    private func handleFaces(request: VNRequest, error: Error?) {
+    private func handleFaces(from buffer: CVPixelBuffer, request: VNRequest, error: Error?) {
         DispatchQueue.main.async {
             //perform all the UI updates on the main queue
+            let tempCIImage = CIImage(cvImageBuffer: buffer)
             guard let results = request.results as? [VNFaceObservation] else { return }
             
             //get rid of last frame's boxes
             self.removeMask()
             
             for face in results {
-                self.drawFaceboundingBox(face: face)
+                self.drawFaceboundingBox(face: face, tempCIImage: tempCIImage)
             }
             
             self.showFaces()
@@ -285,7 +301,7 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
     }
 
     
-    func drawFaceboundingBox(face : VNFaceObservation) {
+    func drawFaceboundingBox(face : VNFaceObservation, tempCIImage: CIImage) {
         // The coordinates are normalized to the dimensions of the processed image, with the origin at the image's lower-left corner.
         
         let transform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -cameraView.bounds.height)
@@ -302,10 +318,17 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
             let tempImage = tempCIImage.oriented(forExifOrientation: 6)
             
             let cropScale = CGAffineTransform.identity.scaledBy(x: tempImage.extent.width, y: tempImage.extent.height)
-            let cropFaceBounds = face.boundingBox.applying(cropScale)
-//            let cropFaceBounds = increaseRect(rect: face.boundingBox.applying(cropScale),byPercentage: 0.1)
+//            let cropFaceBounds = face.boundingBox.applying(cropScale)
+            let cropFaceBounds = increaseRect(rect: face.boundingBox.applying(cropScale),byPercentage: 0.5)
             
-            faceArray.append(tempImage.cropped(to: cropFaceBounds))
+            if (!self.isFirst){
+                faceArray.append(tempImage.cropped(to: cropFaceBounds))
+                self.isFirst = true
+            }
+            else {
+                self.isFirst = false
+            }
+            
         }
     }
     
@@ -450,6 +473,32 @@ class FaceDetectionViewController: UIViewController, AVCaptureVideoDataOutputSam
         let adjustmentWidth = (startWidth * percentage) / 2.0
         let adjustmentHeight = (startHeight * percentage) / 2.0
         return rect.insetBy(dx: -adjustmentWidth, dy: -adjustmentHeight)
+    }
+    
+    func resizeImage(image: UIImage) -> UIImage {
+        let size = image.size
+        
+        let widthRatio  = CGFloat(0.5)
+        let heightRatio = CGFloat(0.5)
+        
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+        
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+        
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
     }
     
     override var prefersStatusBarHidden: Bool {
