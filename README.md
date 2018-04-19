@@ -10,6 +10,8 @@ This project uses the Vision framework in iOS 11 so you need to set the deployme
 
 Next, you will need to install CocoPods. Then do `pod install --repo-update` in the root directory to install dependencies listed in the podfile.
 
+You will also need to change the backend base address and various API routes in the `RestClient.swift` file. 
+
 ### Note
 
 The project in this repo is configured with my own LinkedIn API account and signed with my developer account. In order to make your own version, you will need to register for a public LinkedIn API account. 
