@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 
 class RestClient: NSObject {
-    let baseUrl: String = "http://ec2-34-203-205-241.compute-1.amazonaws.com:5000"
+    let baseUrl: String = "http://ec2-54-85-171-146.compute-1.amazonaws.com:5000"
     
     var urlRequest: Any
     var session: URLSession
